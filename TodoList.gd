@@ -30,7 +30,6 @@ func _ready() -> void:
 	
 	FileMenuButton.get_popup().connect('index_pressed', self, '_on_File_menu_index_pressed')
 	
-	(TodoItems.get_item_list() as ItemList).connect('gui_input', self, '_on_TodoItems_gui_input')
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
 	
 	# Display status message depending on whether the file exists and was loaded
@@ -88,10 +87,12 @@ func save_config():
 func _on_File_menu_index_pressed(index: int) -> void:
 	match index:
 		0:
+			# Choose new file
 			$FileDialog.popup_centered_ratio(0.85)
 		1:
+			# Save current file
 			_save_data_file()
-			StatusLabel.display_status(2, "Saved file: " + config.data_file)
+			StatusLabel.display_status(3, "Saved file: " + config.data_file)
 
 func _on_FileDialog_file_selected(path: String) -> void:
 	config.data_file = path
@@ -123,21 +124,20 @@ func _on_todo_item_activated(index: int) -> void:
 		modulate = check_color
 	})
 
-func _on_TodoItems_gui_input(event: InputEvent) -> void:
-	if event is InputEventKey:
-		match event.scancode:
-			KEY_DELETE:
-				if _current_item >= 0:
-					TodoItems.remove_item(_current_item)
-					_on_TodoItems_nothing_selected()
-				else:
-					StatusLabel.display_status(3, 'Select an item first')
-			KEY_E:
-				if _current_item >= 0:
-					ModifyItem.start_edit(_current_item, TodoItems.get_item_text(_current_item))
-					MainTabs.set_deferred('current_tab', 1)
-				else:
-					StatusLabel.display_status(3, 'Select an item first')
-
 func _on_TodoItems_nothing_selected() -> void:
 	_current_item = -1
+
+
+func _on_DeleteEntryButton_pressed() -> void:
+	if _current_item >= 0:
+		TodoItems.remove_item(_current_item)
+		_on_TodoItems_nothing_selected()
+	else:
+		StatusLabel.display_status(3, 'Select an item first')
+
+func _on_EditItemButton_pressed() -> void:
+	if _current_item >= 0:
+		ModifyItem.start_edit(_current_item, TodoItems.get_item_text(_current_item))
+		MainTabs.set_deferred('current_tab', 1)
+	else:
+		StatusLabel.display_status(3, 'Select an item first')

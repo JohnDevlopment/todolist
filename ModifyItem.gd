@@ -17,8 +17,6 @@ func start_edit(index: int, text: String):
 	set_meta('item_index', index)
 	NewItem.text = text
 	$WhichItem.bbcode_text = "Editing item [i]%d[/i]" % index
-	
-	print("Editing item %d with current value being '%s'" % [index, text])
 
 func _on_NewItem_text_entered(new_text: String) -> void:
 	NewItem.release_focus()

@@ -68,6 +68,20 @@ margin_bottom = 20.0
 text = "File"
 items = [ "Choose File", null, 0, false, false, 0, 0, null, "", false, "Save", null, 0, false, false, 1, 0, null, "", false ]
 
+[node name="EditItemButton" type="Button" parent="Margin/MainColumn/Menu"]
+margin_left = 39.0
+margin_right = 110.0
+margin_bottom = 20.0
+text = "Edit Item"
+flat = true
+
+[node name="DeleteEntryButton" type="Button" parent="Margin/MainColumn/Menu"]
+margin_left = 114.0
+margin_right = 205.0
+margin_bottom = 20.0
+text = "Delete Entry"
+flat = true
+
 [node name="MainTabs" type="TabContainer" parent="Margin/MainColumn"]
 margin_top = 24.0
 margin_right = 580.0
@@ -113,6 +127,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[connection signal="pressed" from="Margin/MainColumn/Menu/EditItemButton" to="." method="_on_EditItemButton_pressed"]
+[connection signal="pressed" from="Margin/MainColumn/Menu/DeleteEntryButton" to="." method="_on_DeleteEntryButton_pressed"]
 [connection signal="item_activated" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_activated"]
 [connection signal="item_selected" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_selected"]
 [connection signal="edit_request" from="Margin/MainColumn/MainTabs/$ModifyItem" to="." method="_on_ModifyItem_edit_request"]
