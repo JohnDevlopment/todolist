@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://ModifyItem.gd" type="Script" id=1]
+[ext_resource path="res://assets/fonts/liberation_sans/liberation_sans_16_italics.tres" type="DynamicFont" id=2]
+[ext_resource path="res://assets/fonts/liberation_sans/liberation_sans_16_bold.tres" type="DynamicFont" id=3]
+[ext_resource path="res://assets/fonts/liberation_sans/liberation_sans_16_normal.tres" type="DynamicFont" id=4]
+[ext_resource path="res://assets/fonts/liberation_sans/liberation_sans_16_bold-italics.tres" type="DynamicFont" id=5]
+
+[node name="$ModifyItem" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 8.0
+margin_right = -4.0
+margin_bottom = -4.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WhichItem" type="RichTextLabel" parent="."]
+margin_right = 592.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 0, 20 )
+custom_fonts/bold_italics_font = ExtResource( 5 )
+custom_fonts/italics_font = ExtResource( 2 )
+custom_fonts/bold_font = ExtResource( 3 )
+custom_fonts/normal_font = ExtResource( 4 )
+bbcode_enabled = true
+bbcode_text = "Editing item [i]5[/i]"
+text = "Editing item 5"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_top = 24.0
+margin_right = 592.0
+margin_bottom = 48.0
+
+[node name="NewItem" type="LineEdit" parent="HBoxContainer"]
+margin_right = 473.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+placeholder_text = "New item text"
+caret_blink = true
+
+[node name="Submit" type="Button" parent="HBoxContainer"]
+margin_left = 477.0
+margin_right = 534.0
+margin_bottom = 24.0
+text = "Submit"
+
+[node name="Cancel" type="Button" parent="HBoxContainer"]
+margin_left = 538.0
+margin_right = 592.0
+margin_bottom = 24.0
+text = "Cancel"
+
+[connection signal="text_entered" from="HBoxContainer/NewItem" to="." method="_on_NewItem_text_entered"]
+[connection signal="pressed" from="HBoxContainer/Submit" to="." method="_on_Submit_pressed"]
+[connection signal="pressed" from="HBoxContainer/Cancel" to="." method="_on_Cancel_pressed"]
