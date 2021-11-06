@@ -1,7 +1,31 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://TodoList.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/check.png" type="Texture" id=2]
+[ext_resource path="res://ModifyItem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ContainsTodoList.tscn" type="PackedScene" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Label
+
+var timer: Timer
+
+func _ready() -> void:
+	text = ''
+	timer = Timer.new()
+	timer.one_shot = 1
+	timer.autostart = false
+	timer.connect('timeout', self, '_on_timeout', [], CONNECT_DEFERRED)
+	add_child(timer)
+
+func _on_timeout() -> void:
+	text = ''
+
+func display_status(duration: float, message: String) -> void:
+	assert(duration >= 0.1)
+	text = message
+	timer.start(duration)
+"
 
 [node name="TodoList" type="Panel"]
 anchor_right = 1.0
@@ -12,7 +36,7 @@ __meta__ = {
 }
 check_color = Color( 0.0352941, 0.858824, 0.160784, 1 )
 
-[node name="ResourcePreloader" type="ResourcePreloader" parent="."]
+[node name="Resources" type="ResourcePreloader" parent="."]
 resources = [ PoolStringArray( "check" ), [ ExtResource( 2 ) ] ]
 
 [node name="Margin" type="MarginContainer" parent="."]
@@ -23,55 +47,53 @@ margin_top = 10.0
 margin_right = -10.0
 margin_bottom = -10.0
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Margin"]
-margin_right = 580.0
-margin_bottom = 655.0
-
-[node name="Menu" type="HBoxContainer" parent="Margin/VBoxContainer"]
-margin_right = 580.0
-margin_bottom = 20.0
-
-[node name="File" type="MenuButton" parent="Margin/VBoxContainer/Menu"]
-margin_right = 35.0
-margin_bottom = 20.0
-text = "File"
-items = [ "Choose File", null, 0, false, false, 0, 0, null, "", false ]
-
-[node name="TodoItems" type="ItemList" parent="Margin/VBoxContainer"]
-margin_top = 24.0
-margin_right = 580.0
-margin_bottom = 609.0
-size_flags_vertical = 3
-
-[node name="Label" type="Label" parent="Margin/VBoxContainer"]
-margin_top = 613.0
-margin_right = 580.0
-margin_bottom = 627.0
-text = "New Item"
-align = 1
-
-[node name="AddItem" type="HBoxContainer" parent="Margin/VBoxContainer"]
-margin_top = 631.0
+[node name="MainColumn" type="VBoxContainer" parent="Margin"]
 margin_right = 580.0
 margin_bottom = 655.0
 __meta__ = {
-"_edit_group_": true
+"_edit_lock_": true
 }
 
-[node name="Name" type="LineEdit" parent="Margin/VBoxContainer/AddItem"]
-margin_right = 539.0
-margin_bottom = 24.0
-size_flags_horizontal = 3
-placeholder_text = "TODO item"
-
-[node name="Add" type="Button" parent="Margin/VBoxContainer/AddItem"]
-margin_left = 543.0
+[node name="Menu" type="HBoxContainer" parent="Margin/MainColumn"]
 margin_right = 580.0
-margin_bottom = 24.0
-text = "Add"
+margin_bottom = 20.0
+
+[node name="FileMenuButton" type="MenuButton" parent="Margin/MainColumn/Menu"]
+margin_right = 35.0
+margin_bottom = 20.0
+text = "File"
+items = [ "Choose File", null, 0, false, false, 0, 0, null, "", false, "Save", null, 0, false, false, 1, 0, null, "", false ]
+
+[node name="MainTabs" type="TabContainer" parent="Margin/MainColumn"]
+margin_top = 24.0
+margin_right = 580.0
+margin_bottom = 637.0
+size_flags_vertical = 3
+tabs_visible = false
+
+[node name="$TodoItems" parent="Margin/MainColumn/MainTabs" instance=ExtResource( 4 )]
+
+[node name="$ModifyItem" parent="Margin/MainColumn/MainTabs" instance=ExtResource( 3 )]
+visible = false
+
+[node name="StatusBar" type="HBoxContainer" parent="Margin/MainColumn"]
+margin_top = 641.0
+margin_right = 580.0
+margin_bottom = 655.0
+alignment = 1
+
+[node name="StatusLabel" type="Label" parent="Margin/MainColumn/StatusBar"]
+margin_left = 141.0
+margin_right = 438.0
+margin_bottom = 14.0
+size_flags_vertical = 3
+custom_colors/font_color = Color( 0.792157, 0.858824, 0.0117647, 1 )
+text = "The quick brown fox jumped over the lazy dog."
+script = SubResource( 1 )
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 margin_right = 83.0
@@ -91,10 +113,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="gui_input" from="Margin/VBoxContainer/TodoItems" to="." method="_on_TodoItems_gui_input"]
-[connection signal="item_activated" from="Margin/VBoxContainer/TodoItems" to="." method="_on_TodoItems_item_activated"]
-[connection signal="item_selected" from="Margin/VBoxContainer/TodoItems" to="." method="_on_TodoItems_item_selected"]
-[connection signal="nothing_selected" from="Margin/VBoxContainer/TodoItems" to="." method="_on_TodoItems_nothing_selected"]
-[connection signal="text_entered" from="Margin/VBoxContainer/AddItem/Name" to="." method="_on_add_todo_item"]
-[connection signal="pressed" from="Margin/VBoxContainer/AddItem/Add" to="." method="_on_add_todo_item"]
+[connection signal="item_activated" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_activated"]
+[connection signal="item_selected" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_selected"]
+[connection signal="edit_request" from="Margin/MainColumn/MainTabs/$ModifyItem" to="." method="_on_ModifyItem_edit_request"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
