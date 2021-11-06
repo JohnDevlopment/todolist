@@ -34,6 +34,9 @@ func get_array() -> Array:
 func get_item_icon(index: int):
 	return todo_items.get_item_icon(index)
 
+func get_item_text(index: int):
+	return todo_items.get_item_text(index)
+
 func get_item_list() -> ItemList: return todo_items
 
 func remove_item(index: int) -> void:
