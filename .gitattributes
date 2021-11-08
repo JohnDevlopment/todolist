@@ -1,0 +1,3 @@
+addons/snippets_plugin* export-ignore
+addons/Todo_Manager/* export-ignore
+snippets/* export-ignore
