@@ -2,6 +2,16 @@ extends Panel
 
 export var check_color: Color
 
+# This enum helps with indexing the File menu. If any of the menu items
+# are rearranged, this needs to change to reflect that.
+enum FileMenuIndex {
+	CHOOSE_FILE,
+	SAVE,
+	DELETE_FILES,
+	CLOSE_FILE,
+	QUIT
+}
+
 const INVALID_VALUE: int = 0xffffffff
 const CONFIG_FILE := 'user://todolist.cfg'
 
@@ -12,8 +22,11 @@ var ItemName: LineEdit
 var FileMenuButton: MenuButton
 var MainTabs: TabContainer
 var ModifyItem: Control
+var EditItemButton: Button
+var DeleteEntryButton: Button
 
 var config := {'data_file': 'user://todo_items.json'}
+var data_file_loaded := false
 
 var _current_item := -1
 
@@ -22,29 +35,67 @@ func _ready() -> void:
 	
 	# Read config file
 	if FileHelpers.file_exists(CONFIG_FILE):
-		load_config()
+		_load_config()
 	else:
-		save_config()
+		_save_config()
 	
 	_read_data_file()
 	
+	# Display status message depending on whether the file exists and was loaded
+	if data_file_loaded:
+		StatusLabel.display_status(3, "Successfully loaded '%s'" % config.data_file)
+	elif config.data_file != '':
+		StatusLabel.display_status(3, "'%s' does not exist; will create a new file" % config.data_file)
+	else:
+		StatusLabel.display_status(3, 'No file loaded')
+	
+	# Connect file menu popup
 	FileMenuButton.get_popup().connect('index_pressed', self, '_on_File_menu_index_pressed')
 	
+	# Connect todo item list
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
-	
-	# Display status message depending on whether the file exists and was loaded
-	if get_meta('data_file_loaded'):
-		StatusLabel.display_status(3, "Successfully loaded '%s'" % config.data_file)
-	else:
-		StatusLabel.display_status(3, "'%s' does not exist; will create a new file" % config.data_file)
 
 func _exit_tree() -> void:
 	_save_data_file()
-	save_config()
+	_save_config()
+
+# Data files
+
+func _no_file_loaded() -> void:
+	TodoItems.set_enabled(false)
+	var file_menu: PopupMenu = FileMenuButton.get_popup()
+	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, true)
+	file_menu.set_item_disabled(FileMenuIndex.SAVE, true)
+	EditItemButton.disabled = true
+	DeleteEntryButton.disabled = true
+
+func _file_loaded() -> void:
+	TodoItems.set_enabled(true)
+	var file_menu: PopupMenu = FileMenuButton.get_popup()
+	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, false)
+	file_menu.set_item_disabled(FileMenuIndex.SAVE, false)
+	EditItemButton.disabled = false
+	DeleteEntryButton.disabled = false
+
+func _close_data_file() -> void:
+	# Save file before closing
+	if config.data_file != '':
+		_save_data_file()
+		StatusLabel.display_status(3, "'%s' has been saved...closing now" % config.data_file)
+	
+	TodoItems.clear_items()
+	config.data_file = ''
+	data_file_loaded = false
+	_no_file_loaded()
 
 func _read_data_file() -> void:
+	TodoItems.set_enabled(true)
 	TodoItems.clear_items()
-	set_meta('data_file_loaded', false)
+	data_file_loaded = false
+	
+	if config.data_file == '':
+		_no_file_loaded()
+		return
 	
 	# Read list file
 	var list_data = FileHelpers.read_json_file(config.data_file)
@@ -55,13 +106,19 @@ func _read_data_file() -> void:
 				icon = icon,
 				modulate = check_color
 			})
-		set_meta('data_file_loaded', true)
+	
+	data_file_loaded = true
+	_file_loaded()
+	StatusLabel.display_status(3, "Set data file to '%s'" % config.data_file)
 
 func _save_data_file() -> void:
+	if not data_file_loaded: return
 	var item_list: Array = TodoItems.get_array()
 	FileHelpers.write_json_file(config.data_file, item_list)
 
-func load_config():
+# Config file
+
+func _load_config():
 	var config_file := ConfigFile.new()
 	
 	var err := config_file.load(CONFIG_FILE)
@@ -70,10 +127,8 @@ func load_config():
 	var value = config_file.get_value('', 'data_file', INVALID_VALUE)
 	if value is String:
 		config.data_file = value
-	
-	print("Data file: ", config.data_file)
 
-func save_config():
+func _save_config():
 	var config_file := ConfigFile.new()
 	config_file.set_value('', 'data_file', config.data_file)
 	
@@ -82,28 +137,45 @@ func save_config():
 		$AcceptDialog.dialog_text = "Failed to open 'user://%s'." % config.data_file
 		$AcceptDialog.popup_centered()
 
-# Signals: TodoItems
+# Signals
 
 func _on_File_menu_index_pressed(index: int) -> void:
 	match index:
-		0:
+		FileMenuIndex.CHOOSE_FILE:
 			# Choose new file
 			$FileDialog.popup_centered_ratio(0.85)
-		1:
+		FileMenuIndex.SAVE:
 			# Save current file
 			_save_data_file()
 			StatusLabel.display_status(3, "Saved file: " + config.data_file)
+		FileMenuIndex.DELETE_FILES:
+			# Delete file dialog
+			var dlg: Control = load('res://DeleteFile.tscn').instance()
+			add_child(dlg)
+			dlg.connect('files_deleted', self, '_on_deletefile_files_deleted')
+			dlg.show_dialog()
+		FileMenuIndex.CLOSE_FILE:
+			# Close current file
+			_close_data_file()
+		FileMenuIndex.QUIT:
+			# Quit
+			get_tree().quit()
 
 func _on_FileDialog_file_selected(path: String) -> void:
 	config.data_file = path
 	_read_data_file()
-	StatusLabel.display_status(3, "Set data file to '%s'" % path)
 
 func _on_ModifyItem_edit_request(index: int, new_text: String) -> void:
 	MainTabs.current_tab = 0
 	
 	if index >= 0 and not new_text.empty():
 		TodoItems.set_item_params(index, {text = new_text})
+
+# Connected in _on_File_menu_index_pressed()
+# Checks if the current file is among the ones deleted
+func _on_deletefile_files_deleted(files: PoolStringArray):
+	if config.data_file in files:
+		_close_data_file()
 
 # TodoItems signals
 
@@ -126,7 +198,6 @@ func _on_todo_item_activated(index: int) -> void:
 
 func _on_TodoItems_nothing_selected() -> void:
 	_current_item = -1
-
 
 func _on_DeleteEntryButton_pressed() -> void:
 	if _current_item >= 0:

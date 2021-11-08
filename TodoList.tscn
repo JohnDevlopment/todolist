@@ -32,7 +32,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_lock_": true
+"_edit_use_anchors_": false
 }
 check_color = Color( 0.0352941, 0.858824, 0.160784, 1 )
 
@@ -47,26 +47,25 @@ margin_top = 10.0
 margin_right = -10.0
 margin_bottom = -10.0
 __meta__ = {
-"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
 [node name="MainColumn" type="VBoxContainer" parent="Margin"]
 margin_right = 580.0
 margin_bottom = 655.0
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="Menu" type="HBoxContainer" parent="Margin/MainColumn"]
 margin_right = 580.0
 margin_bottom = 20.0
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="FileMenuButton" type="MenuButton" parent="Margin/MainColumn/Menu"]
 margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
-items = [ "Choose File", null, 0, false, false, 0, 0, null, "", false, "Save", null, 0, false, false, 1, 0, null, "", false ]
+items = [ "Choose File", null, 0, false, false, 0, 0, null, "", false, "Save", null, 0, false, false, 1, 0, null, "", false, "Delete Files", null, 0, false, false, 2, 0, null, "", false, "Close File", null, 0, false, false, 3, 0, null, "", false, "Quit", null, 0, false, false, 4, 0, null, "", false ]
 
 [node name="EditItemButton" type="Button" parent="Margin/MainColumn/Menu"]
 margin_left = 39.0
@@ -99,6 +98,9 @@ margin_top = 641.0
 margin_right = 580.0
 margin_bottom = 655.0
 alignment = 1
+__meta__ = {
+"_edit_group_": true
+}
 
 [node name="StatusLabel" type="Label" parent="Margin/MainColumn/StatusBar"]
 margin_left = 141.0

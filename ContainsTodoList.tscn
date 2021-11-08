@@ -15,6 +15,7 @@ __meta__ = {
 }
 
 [node name="TodoItems" type="ItemList" parent="."]
+light_mask = 0
 margin_right = 592.0
 margin_bottom = 617.0
 size_flags_vertical = 3
