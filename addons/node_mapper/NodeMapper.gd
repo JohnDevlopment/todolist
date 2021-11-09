@@ -42,6 +42,6 @@ func export_vars(path: String, host: Node, vars: Dictionary = {}) -> void:
 		var node_path = str(node.get_path())
 		if (node_path.begins_with(host_path)):
 			node_path = node_path.substr(host_path.length() + 1)
-		file.store_line("onready var " + var_name + ": " + node_type +
-			' = get_node("' + node_path + '")')
+		
+		file.store_line("onready var %s: %s = get_node('%s')" % [var_name, node_type, node_path])
 	file.close()

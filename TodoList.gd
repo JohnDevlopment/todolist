@@ -15,15 +15,24 @@ enum FileMenuIndex {
 const INVALID_VALUE: int = 0xffffffff
 const CONFIG_FILE := 'user://todolist.cfg'
 
-var TodoItems: Control
-var Resources: ResourcePreloader
-var StatusLabel: Label
-var ItemName: LineEdit
-var FileMenuButton: MenuButton
-var MainTabs: TabContainer
-var ModifyItem: Control
-var EditItemButton: Button
-var DeleteEntryButton: Button
+onready var Resources: ResourcePreloader = get_node("Resources")
+onready var FileMenuButton: MenuButton = get_node("Margin/MainColumn/Menu/FileMenuButton")
+onready var EditItemButton: Button = get_node("Margin/MainColumn/Menu/EditItemButton")
+onready var DeleteEntryButton: Button = get_node("Margin/MainColumn/Menu/DeleteEntryButton")
+onready var TodoItems: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$TodoItems")
+onready var ModifyItem: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$ModifyItem")
+onready var MainTabs: TabContainer = get_node("Margin/MainColumn/MainTabs")
+onready var StatusLabel: Label = get_node("Margin/MainColumn/StatusBar/StatusLabel")
+
+#var TodoItems: Control
+#var Resources: ResourcePreloader
+#var StatusLabel: Label
+#var ItemName: LineEdit
+#var FileMenuButton: MenuButton
+#var MainTabs: TabContainer
+#var ModifyItem: Control
+#var EditItemButton: Button
+#var DeleteEntryButton: Button
 
 var config := {'data_file': 'user://todo_items.json'}
 var data_file_loaded := false
@@ -31,8 +40,6 @@ var data_file_loaded := false
 var _current_item := -1
 
 func _ready() -> void:
-	NodeMapper.map_nodes(self)
-	
 	# Read config file
 	if FileHelpers.file_exists(CONFIG_FILE):
 		_load_config()
