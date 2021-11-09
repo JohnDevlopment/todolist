@@ -4,7 +4,7 @@ A Godot-based GUI application for keeping a todo list. You can either download o
 
 ## Building From Source
 
-This project was built using Godot 3.4 stable; as such, use that to export this project.
+This project was built using Godot 3.4 stable; as such, use that to export this project. Here is a [link to the download page](https://godotengine.org/download).
 
 The syntax for the commandline will be `godot --export PRESET PATH`, where "godot" is a path to the Godot binary or the name of a command. "PRESET" is an export preset: "Linux/X11" for Linux platforms and "Windows Desktop" for Windows platforms. You can also use "pck" to get the PCK file.
 
