@@ -9,7 +9,8 @@ enum FileMenuIndex {
 	SAVE,
 	DELETE_FILES,
 	CLOSE_FILE,
-	QUIT
+	QUIT,
+	GET_USER_DIRECTORY
 }
 
 const INVALID_VALUE: int = 0xffffffff
@@ -23,16 +24,6 @@ onready var TodoItems: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$Tod
 onready var ModifyItem: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$ModifyItem")
 onready var MainTabs: TabContainer = get_node("Margin/MainColumn/MainTabs")
 onready var StatusLabel: Label = get_node("Margin/MainColumn/StatusBar/StatusLabel")
-
-#var TodoItems: Control
-#var Resources: ResourcePreloader
-#var StatusLabel: Label
-#var ItemName: LineEdit
-#var FileMenuButton: MenuButton
-#var MainTabs: TabContainer
-#var ModifyItem: Control
-#var EditItemButton: Button
-#var DeleteEntryButton: Button
 
 var config := {'data_file': 'user://todo_items.json'}
 var data_file_loaded := false
@@ -167,6 +158,10 @@ func _on_File_menu_index_pressed(index: int) -> void:
 		FileMenuIndex.QUIT:
 			# Quit
 			get_tree().quit()
+		FileMenuIndex.GET_USER_DIRECTORY:
+			# Get user directory
+			OS.clipboard = OS.get_user_data_dir()
+			StatusLabel.display_status(3, "User data directory added to the clipboard")
 
 func _on_FileDialog_file_selected(path: String) -> void:
 	config.data_file = path
@@ -182,6 +177,7 @@ func _on_ModifyItem_edit_request(index: int, new_text: String) -> void:
 # Checks if the current file is among the ones deleted
 func _on_deletefile_files_deleted(files: PoolStringArray):
 	if config.data_file in files:
+		config.data_file = ''
 		_close_data_file()
 
 # TodoItems signals

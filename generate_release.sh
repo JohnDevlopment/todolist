@@ -61,4 +61,4 @@ clear
 
 zipfile="todolist-v$version${prerelease}_$arch.zip"
 
-zip -mT releases/$zipfile bin/$arch/*
+zip -DT releases/$zipfile bin/$arch/*
