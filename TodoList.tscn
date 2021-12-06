@@ -1,9 +1,15 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://TodoList.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/check.png" type="Texture" id=2]
 [ext_resource path="res://ModifyItem.tscn" type="PackedScene" id=3]
 [ext_resource path="res://ContainsTodoList.tscn" type="PackedScene" id=4]
+
+[sub_resource type="InputEventKey" id=2]
+physical_scancode = 16777224
+
+[sub_resource type="ShortCut" id=3]
+shortcut = SubResource( 2 )
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Label
@@ -78,7 +84,15 @@ flat = true
 margin_left = 114.0
 margin_right = 205.0
 margin_bottom = 20.0
+shortcut = SubResource( 3 )
 text = "Delete Entry"
+flat = true
+
+[node name="DeleteCheckedEntries" type="Button" parent="Margin/MainColumn/Menu"]
+margin_left = 209.0
+margin_right = 370.0
+margin_bottom = 20.0
+text = "Delete Checked Entries"
 flat = true
 
 [node name="MainTabs" type="TabContainer" parent="Margin/MainColumn"]
@@ -129,8 +143,16 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+margin_right = 200.0
+margin_bottom = 70.0
+popup_exclusive = true
+dialog_text = "You are about to wipe out the entire world! Confirm?"
+dialog_autowrap = true
+
 [connection signal="pressed" from="Margin/MainColumn/Menu/EditItemButton" to="." method="_on_EditItemButton_pressed"]
 [connection signal="pressed" from="Margin/MainColumn/Menu/DeleteEntryButton" to="." method="_on_DeleteEntryButton_pressed"]
+[connection signal="pressed" from="Margin/MainColumn/Menu/DeleteCheckedEntries" to="." method="_on_DeleteCheckedEntries_pressed" flags=3]
 [connection signal="item_activated" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_activated"]
 [connection signal="item_selected" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_selected"]
 [connection signal="edit_request" from="Margin/MainColumn/MainTabs/$ModifyItem" to="." method="_on_ModifyItem_edit_request"]

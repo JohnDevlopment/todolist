@@ -24,9 +24,6 @@ func _ready() -> void:
 	if Engine.editor_hint: return
 	NodeMapper.map_nodes(self)
 	_list_files()
-	
-	# HACK: show dialog while testing this
-#	call_deferred('show_dialog')
 
 func show_dialog():
 	popup_centered(popup_size)

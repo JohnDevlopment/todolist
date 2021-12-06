@@ -41,14 +41,19 @@ func _ready() -> void:
 	
 	# Display status message depending on whether the file exists and was loaded
 	if data_file_loaded:
-		StatusLabel.display_status(3, "Successfully loaded '%s'" % config.data_file)
+		StatusLabel.call_deferred("display_status", 3, "Successfully loaded '%s'" % config.data_file)
 	elif config.data_file != '':
-		StatusLabel.display_status(3, "'%s' does not exist; will create a new file" % config.data_file)
+		StatusLabel.call_deferred("display_status", 3, "'%s' does not exist; will create a new file" % config.data_file)
 	else:
-		StatusLabel.display_status(3, 'No file loaded')
+		StatusLabel.call_deferred("display_status", 3, 'No file loaded')
 	
 	# Connect file menu popup
-	FileMenuButton.get_popup().connect('index_pressed', self, '_on_File_menu_index_pressed')
+	if true:
+		var menu := FileMenuButton.get_popup()
+		menu.connect('index_pressed', self, '_on_File_menu_index_pressed')
+		
+		menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
+		menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
 	
 	# Connect todo item list
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
@@ -56,6 +61,24 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	_save_data_file()
 	_save_config()
+
+func _create_shortcut(key: int, mods: Dictionary, is_physical: bool = true) -> ShortCut:
+	var sc := ShortCut.new()
+	var event := InputEventKey.new()
+	
+	if is_physical:
+		event.physical_scancode = key
+	else:
+		event.scancode = key
+	
+	# Set mods in event
+	for mod in ['control', 'shift', 'alt', 'meta', 'command']:
+		if mod in mods:
+			event.set(mod, mods[mod])
+	
+	sc.shortcut = event
+	
+	return sc
 
 # Data files
 
@@ -215,3 +238,6 @@ func _on_EditItemButton_pressed() -> void:
 		MainTabs.set_deferred('current_tab', 1)
 	else:
 		StatusLabel.display_status(3, 'Select an item first')
+
+func _on_DeleteCheckedEntries_pressed() -> void:
+	TodoItems.remove_checked()
