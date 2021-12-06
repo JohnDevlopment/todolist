@@ -42,6 +42,13 @@ func get_item_text(index: int):
 
 func get_item_list() -> ItemList: return todo_items
 
+func remove_checked() -> void:
+	var items := get_array()
+	clear_items()
+	for item in items:
+		if not item.finished:
+			_add_todo_item(item.text)
+
 func remove_item(index: int) -> void:
 	assert(index >= 0)
 	todo_items.remove_item(index)
