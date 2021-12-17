@@ -156,4 +156,5 @@ dialog_autowrap = true
 [connection signal="item_activated" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_activated"]
 [connection signal="item_selected" from="Margin/MainColumn/MainTabs/$TodoItems" to="." method="_on_todo_item_selected"]
 [connection signal="edit_request" from="Margin/MainColumn/MainTabs/$ModifyItem" to="." method="_on_ModifyItem_edit_request"]
+[connection signal="about_to_show" from="FileDialog" to="." method="_on_FileDialog_about_to_show"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

@@ -241,3 +241,6 @@ func _on_EditItemButton_pressed() -> void:
 
 func _on_DeleteCheckedEntries_pressed() -> void:
 	TodoItems.remove_checked()
+
+func _on_FileDialog_about_to_show() -> void:
+	$FileDialog.call_deferred('invalidate')
