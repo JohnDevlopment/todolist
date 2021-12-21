@@ -13,13 +13,19 @@ enum FileMenuIndex {
 	GET_USER_DIRECTORY
 }
 
+enum EditMenuIndex {
+	EDIT_ITEM,
+	DELETE_ITEM,
+	SORT_ITEMS,
+	DELETE_CHECKED
+}
+
 const INVALID_VALUE: int = 0xffffffff
 const CONFIG_FILE := 'user://todolist.cfg'
 
 onready var Resources: ResourcePreloader = get_node("Resources")
 onready var FileMenuButton: MenuButton = get_node("Margin/MainColumn/Menu/FileMenuButton")
-onready var EditItemButton: Button = get_node("Margin/MainColumn/Menu/EditItemButton")
-onready var DeleteEntryButton: Button = get_node("Margin/MainColumn/Menu/DeleteEntryButton")
+onready var EditMenuButton: MenuButton = get_node("Margin/MainColumn/Menu/EditMenuButton")
 onready var TodoItems: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$TodoItems")
 onready var ModifyItem: VBoxContainer = get_node("Margin/MainColumn/MainTabs/$ModifyItem")
 onready var MainTabs: TabContainer = get_node("Margin/MainColumn/MainTabs")
@@ -54,6 +60,9 @@ func _ready() -> void:
 		
 		menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
 		menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
+		
+		menu = EditMenuButton.get_popup()
+		menu.connect('index_pressed', self, '_on_edit_menu_index')
 	
 	# Connect todo item list
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
@@ -80,6 +89,23 @@ func _create_shortcut(key: int, mods: Dictionary, is_physical: bool = true) -> S
 	
 	return sc
 
+func _delete_entry() -> void:
+	if _current_item >= 0:
+		TodoItems.remove_item(_current_item)
+		_on_TodoItems_nothing_selected()
+	else:
+		StatusLabel.display_status(3, 'Select an item first')
+
+func _edit_item() -> void:
+	if _current_item >= 0:
+		ModifyItem.start_edit(_current_item, TodoItems.get_item_text(_current_item))
+		MainTabs.set_deferred('current_tab', 1)
+	else:
+		StatusLabel.display_status(3, 'Select an item first')
+
+func _delete_checked_entries() -> void:
+	TodoItems.remove_checked()
+
 # Data files
 
 func _no_file_loaded() -> void:
@@ -87,16 +113,16 @@ func _no_file_loaded() -> void:
 	var file_menu: PopupMenu = FileMenuButton.get_popup()
 	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, true)
 	file_menu.set_item_disabled(FileMenuIndex.SAVE, true)
-	EditItemButton.disabled = true
-	DeleteEntryButton.disabled = true
+	
+	EditMenuButton.disabled = true
 
 func _file_loaded() -> void:
 	TodoItems.set_enabled(true)
 	var file_menu: PopupMenu = FileMenuButton.get_popup()
 	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, false)
 	file_menu.set_item_disabled(FileMenuIndex.SAVE, false)
-	EditItemButton.disabled = false
-	DeleteEntryButton.disabled = false
+	
+	EditMenuButton.disabled = false
 
 func _close_data_file() -> void:
 	# Save file before closing
@@ -186,6 +212,24 @@ func _on_File_menu_index_pressed(index: int) -> void:
 			OS.clipboard = OS.get_user_data_dir()
 			StatusLabel.display_status(3, "User data directory added to the clipboard")
 
+func _on_edit_menu_index(index: int) -> void:
+	match index:
+		EditMenuIndex.EDIT_ITEM:
+			_edit_item()
+		EditMenuIndex.DELETE_ITEM:
+			if _current_item >= 0:
+				StatusLabel.display_status(3, "Deleted Item %d" % _current_item)
+				TodoItems.remove_item(_current_item)
+				_on_TodoItems_nothing_selected()
+			else:
+				StatusLabel.display_status(3, 'Select an item first')
+		EditMenuIndex.DELETE_CHECKED:
+			TodoItems.remove_checked()
+			StatusLabel.display_status(3, 'Removed Checked Items')
+		EditMenuIndex.SORT_ITEMS:
+			TodoItems.sort_items()
+			StatusLabel.display_status(3, 'Sorted Items')
+
 func _on_FileDialog_file_selected(path: String) -> void:
 	config.data_file = path
 	_read_data_file()
@@ -224,23 +268,6 @@ func _on_todo_item_activated(index: int) -> void:
 
 func _on_TodoItems_nothing_selected() -> void:
 	_current_item = -1
-
-func _on_DeleteEntryButton_pressed() -> void:
-	if _current_item >= 0:
-		TodoItems.remove_item(_current_item)
-		_on_TodoItems_nothing_selected()
-	else:
-		StatusLabel.display_status(3, 'Select an item first')
-
-func _on_EditItemButton_pressed() -> void:
-	if _current_item >= 0:
-		ModifyItem.start_edit(_current_item, TodoItems.get_item_text(_current_item))
-		MainTabs.set_deferred('current_tab', 1)
-	else:
-		StatusLabel.display_status(3, 'Select an item first')
-
-func _on_DeleteCheckedEntries_pressed() -> void:
-	TodoItems.remove_checked()
 
 func _on_FileDialog_about_to_show() -> void:
 	$FileDialog.call_deferred('invalidate')

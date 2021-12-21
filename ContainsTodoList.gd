@@ -7,6 +7,9 @@ onready var todo_items: ItemList = $TodoItems
 
 export var enabled := false setget set_enabled
 
+# options = {
+#   #
+# }
 func add_item(text: String, options: Dictionary = {}):
 	var i: int = todo_items.get_item_count()
 	todo_items.add_item(text)
@@ -71,11 +74,45 @@ func set_item_params(index: int, options: Dictionary) -> void:
 	if 'text' in options and not (options.text as String).empty():
 		todo_items.set_item_text(index, options.text)
 
+func sort_items() -> void:
+	var items := get_array()
+	clear_items()
+	items.sort_custom(self, '_sort_function')
+	for item in items:
+		_add_todo_item(item.text)
+
 # Internals
 
 func _add_todo_item(text: String):
 	add_item(text, {})
 	$AddItem/ItemName.text = ''
+
+# return true if a comes before b
+func _sort_function(a: Dictionary, b: Dictionary) -> bool:
+	assert('text' in a && 'finished' in a)
+	assert('text' in b && 'finished' in b)
+	
+	# one or both are checked
+	if a.finished or not b.finished:
+		# a is checked
+		if a.finished and not b.finished:
+			return true
+		# b is checked
+		elif b.finished and not a.finished:
+			return false
+	
+	# both or neither are checked, so use string comparison
+	
+# warning-ignore:narrowing_conversion
+	var size : int = min(a.text.length(), b.text.length())
+	var a_trunc : String = (a.text as String).substr(0, size)
+	var b_trunc : String = (b.text as String).substr(0, size)
+	
+	var cmp : int = a_trunc.casecmp_to(b_trunc)
+	if cmp <= 0:
+		return true
+	
+	return false
 
 # Signals
 
