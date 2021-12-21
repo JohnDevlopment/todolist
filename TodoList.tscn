@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://TodoList.gd" type="Script" id=1]
 [ext_resource path="res://assets/textures/check.png" type="Texture" id=2]
 [ext_resource path="res://ModifyItem.tscn" type="PackedScene" id=3]
 [ext_resource path="res://ContainsTodoList.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/textures/E-scaled.png" type="Texture" id=5]
+[ext_resource path="res://assets/textures/DEL-scaled.png" type="Texture" id=6]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Label
@@ -72,7 +74,7 @@ margin_left = 39.0
 margin_right = 75.0
 margin_bottom = 20.0
 text = "Edit"
-items = [ "Edit Item", null, 0, false, false, 0, 0, null, "", false, "Delete Entry", null, 0, false, false, 1, 0, null, "", false, "Sort Items", null, 0, false, false, 2, 0, null, "", false, "Delete Checked Items", null, 0, false, false, 3, 0, null, "", false ]
+items = [ "Edit Item", ExtResource( 5 ), 0, false, false, 0, 0, null, "", false, "Delete Item", ExtResource( 6 ), 0, false, false, 1, 0, null, "", false, "Sort Items", null, 0, false, false, 2, 0, null, "", false, "Delete Checked Items", null, 0, false, false, 3, 0, null, "", false ]
 
 [node name="MainTabs" type="TabContainer" parent="Margin/MainColumn"]
 margin_top = 24.0

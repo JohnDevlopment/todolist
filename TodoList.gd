@@ -63,6 +63,8 @@ func _ready() -> void:
 		
 		menu = EditMenuButton.get_popup()
 		menu.connect('index_pressed', self, '_on_edit_menu_index')
+		menu.set_item_shortcut(EditMenuIndex.DELETE_ITEM, _create_shortcut(KEY_DELETE, {}))
+		menu.set_item_shortcut(EditMenuIndex.EDIT_ITEM, _create_shortcut(KEY_E, {}))
 	
 	# Connect todo item list
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
