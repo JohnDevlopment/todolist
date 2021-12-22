@@ -60,6 +60,7 @@ func _ready() -> void:
 		
 		menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
 		menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
+		menu.set_item_shortcut(FileMenuIndex.CLOSE_FILE, _create_shortcut(KEY_W, {control = true}))
 		
 		menu = EditMenuButton.get_popup()
 		menu.connect('index_pressed', self, '_on_edit_menu_index')
