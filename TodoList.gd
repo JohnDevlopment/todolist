@@ -2,9 +2,7 @@ extends Panel
 
 export var check_color: Color
 
-# This enum helps with indexing the File menu. If any of the menu items
-# are rearranged, this needs to change to reflect that.
-enum FileMenuIndex {
+enum FileMenuID {
 	CHOOSE_FILE,
 	SAVE,
 	DELETE_FILES,
@@ -13,7 +11,7 @@ enum FileMenuIndex {
 	QUIT
 }
 
-enum EditMenuIndex {
+enum EditMenuID {
 	EDIT_ITEM,
 	DELETE_ITEM,
 	SORT_ITEMS,
@@ -61,30 +59,36 @@ func _ready() -> void:
 
 func _build_file_menu():
 	var menu := FileMenuButton.get_popup()
+	menu.connect('id_pressed', self, '_on_file_menu_id_pressed')
 	
-	menu.add_item("Choose File <Ctrl+o>")
-	menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
+	menu.add_item("Choose File <Ctrl+o>", FileMenuID.CHOOSE_FILE)
+	menu.set_item_shortcut(menu.get_item_index(FileMenuID.CHOOSE_FILE), _create_shortcut(KEY_O, {control = true}))
 	
-	menu.add_item("Save File <Ctrl+s>")
-	menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
+	menu.add_item("Save File <Ctrl+s>", FileMenuID.SAVE)
+	menu.set_item_shortcut(menu.get_item_index(FileMenuID.SAVE), _create_shortcut(KEY_S, {control = true}))
 	
-	menu.add_item("Delete Files")
+	menu.add_separator()
 	
-	menu.add_item("Get User Directory")
+	menu.add_item("Delete Files", FileMenuID.DELETE_FILES)
 	
-	menu.add_item("Close File <Ctrl+w>")
-	menu.set_item_shortcut(FileMenuIndex.CLOSE_FILE, _create_shortcut(KEY_W, {control = true}))
+	menu.add_item("Get User Directory", FileMenuID.GET_USER_DIRECTORY)
 	
-	menu.add_item("Quit <Alt+F4>")
+	menu.add_separator()
+	
+	menu.add_item("Close File <Ctrl+w>", FileMenuID.CLOSE_FILE)
+	menu.set_item_shortcut(menu.get_item_index(FileMenuID.CLOSE_FILE), _create_shortcut(KEY_W, {control = true}))
+	
+	menu.add_item("Quit <Alt+F4>", FileMenuID.QUIT)
 
 func _build_edit_menu():
 	var menu := EditMenuButton.get_popup()
+	menu.connect('id_pressed', self, '_on_edit_menu_id_pressed')
 	
 	menu.add_item("Edit Item")
-	menu.set_item_shortcut(EditMenuIndex.EDIT_ITEM, _create_shortcut(KEY_E, {}))
+	menu.set_item_shortcut(menu.get_item_index(EditMenuID.EDIT_ITEM), _create_shortcut(KEY_E, {}))
 	
 	menu.add_item("Delete Item")
-	menu.set_item_shortcut(EditMenuIndex.DELETE_ITEM, _create_shortcut(KEY_DELETE, {}))
+	menu.set_item_shortcut(menu.get_item_index(EditMenuID.DELETE_ITEM), _create_shortcut(KEY_DELETE, {}))
 	
 	menu.add_item("Sort Items")
 	
@@ -134,16 +138,16 @@ func _delete_checked_entries() -> void:
 func _no_file_loaded() -> void:
 	TodoItems.set_enabled(false)
 	var file_menu: PopupMenu = FileMenuButton.get_popup()
-	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, true)
-	file_menu.set_item_disabled(FileMenuIndex.SAVE, true)
+	file_menu.set_item_disabled(file_menu.get_item_index(FileMenuID.CLOSE_FILE), true)
+	file_menu.set_item_disabled(file_menu.get_item_index(FileMenuID.SAVE), true)
 	
 	EditMenuButton.disabled = true
 
 func _file_loaded() -> void:
 	TodoItems.set_enabled(true)
 	var file_menu: PopupMenu = FileMenuButton.get_popup()
-	file_menu.set_item_disabled(FileMenuIndex.CLOSE_FILE, false)
-	file_menu.set_item_disabled(FileMenuIndex.SAVE, false)
+	file_menu.set_item_disabled(file_menu.get_item_index(FileMenuID.CLOSE_FILE), false)
+	file_menu.set_item_disabled(file_menu.get_item_index(FileMenuID.SAVE), false)
 	
 	EditMenuButton.disabled = false
 
@@ -209,47 +213,47 @@ func _save_config():
 
 # Signals
 
-func _on_File_menu_index_pressed(index: int) -> void:
+func _on_file_menu_id_pressed(index: int) -> void:
 	match index:
-		FileMenuIndex.CHOOSE_FILE:
+		FileMenuID.CHOOSE_FILE:
 			# Choose new file
 			$FileDialog.popup_centered_ratio(0.85)
-		FileMenuIndex.SAVE:
+		FileMenuID.SAVE:
 			# Save current file
 			_save_data_file()
 			StatusLabel.display_status(3, "Saved file: " + config.data_file)
-		FileMenuIndex.DELETE_FILES:
+		FileMenuID.DELETE_FILES:
 			# Delete file dialog
 			var dlg: Control = load('res://DeleteFile.tscn').instance()
 			add_child(dlg)
 			dlg.connect('files_deleted', self, '_on_deletefile_files_deleted')
 			dlg.show_dialog()
-		FileMenuIndex.CLOSE_FILE:
+		FileMenuID.CLOSE_FILE:
 			# Close current file
 			_close_data_file()
-		FileMenuIndex.QUIT:
+		FileMenuID.QUIT:
 			# Quit
 			get_tree().quit()
-		FileMenuIndex.GET_USER_DIRECTORY:
+		FileMenuID.GET_USER_DIRECTORY:
 			# Get user directory
 			OS.clipboard = OS.get_user_data_dir()
 			StatusLabel.display_status(3, "User data directory added to the clipboard")
 
-func _on_edit_menu_index(index: int) -> void:
-	match index:
-		EditMenuIndex.EDIT_ITEM:
+func _on_edit_menu_id_pressed(id: int) -> void:
+	match id:
+		EditMenuID.EDIT_ITEM:
 			_edit_item()
-		EditMenuIndex.DELETE_ITEM:
+		EditMenuID.DELETE_ITEM:
 			if _current_item >= 0:
 				StatusLabel.display_status(3, "Deleted Item %d" % _current_item)
 				TodoItems.remove_item(_current_item)
 				_on_TodoItems_nothing_selected()
 			else:
 				StatusLabel.display_status(3, 'Select an item first')
-		EditMenuIndex.DELETE_CHECKED:
+		EditMenuID.DELETE_CHECKED:
 			TodoItems.remove_checked()
 			StatusLabel.display_status(3, 'Removed Checked Items')
-		EditMenuIndex.SORT_ITEMS:
+		EditMenuID.SORT_ITEMS:
 			TodoItems.sort_items({icon = Resources.get_resource('check'), modulate = check_color})
 			StatusLabel.display_status(3, 'Sorted Items')
 
@@ -263,7 +267,6 @@ func _on_ModifyItem_edit_request(index: int, new_text: String) -> void:
 	if index >= 0 and not new_text.empty():
 		TodoItems.set_item_params(index, {text = new_text})
 
-# Connected in _on_File_menu_index_pressed()
 # Checks if the current file is among the ones deleted
 func _on_deletefile_files_deleted(files: PoolStringArray):
 	if config.data_file in files:
