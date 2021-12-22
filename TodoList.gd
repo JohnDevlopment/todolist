@@ -37,6 +37,9 @@ var data_file_loaded := false
 var _current_item := -1
 
 func _ready() -> void:
+	_build_file_menu()
+	_build_edit_menu()
+	
 	# Read config file
 	if FileHelpers.file_exists(CONFIG_FILE):
 		_load_config()
@@ -53,22 +56,39 @@ func _ready() -> void:
 	else:
 		StatusLabel.call_deferred("display_status", 3, 'No file loaded')
 	
-	# Connect file menu popup
-	if true:
-		var menu := FileMenuButton.get_popup()
-		menu.connect('index_pressed', self, '_on_File_menu_index_pressed')
-		
-		menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
-		menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
-		menu.set_item_shortcut(FileMenuIndex.CLOSE_FILE, _create_shortcut(KEY_W, {control = true}))
-		
-		menu = EditMenuButton.get_popup()
-		menu.connect('index_pressed', self, '_on_edit_menu_index')
-		menu.set_item_shortcut(EditMenuIndex.DELETE_ITEM, _create_shortcut(KEY_DELETE, {}))
-		menu.set_item_shortcut(EditMenuIndex.EDIT_ITEM, _create_shortcut(KEY_E, {}))
-	
 	# Connect todo item list
 	(TodoItems.get_item_list() as ItemList).connect('nothing_selected', self, '_on_TodoItems_nothing_selected')
+
+func _build_file_menu():
+	var menu := FileMenuButton.get_popup()
+	
+	menu.add_item("Choose File <Ctrl+o>")
+	menu.set_item_shortcut(FileMenuIndex.CHOOSE_FILE, _create_shortcut(KEY_O, {control = true}))
+	
+	menu.add_item("Save File <Ctrl+s>")
+	menu.set_item_shortcut(FileMenuIndex.SAVE, _create_shortcut(KEY_S, {control = true}))
+	
+	menu.add_item("Delete Files")
+	
+	menu.add_item("Get User Directory")
+	
+	menu.add_item("Close File <Ctrl+w>")
+	menu.set_item_shortcut(FileMenuIndex.CLOSE_FILE, _create_shortcut(KEY_W, {control = true}))
+	
+	menu.add_item("Quit <Alt+F4>")
+
+func _build_edit_menu():
+	var menu := EditMenuButton.get_popup()
+	
+	menu.add_item("Edit Item")
+	menu.set_item_shortcut(EditMenuIndex.EDIT_ITEM, _create_shortcut(KEY_E, {}))
+	
+	menu.add_item("Delete Item")
+	menu.set_item_shortcut(EditMenuIndex.DELETE_ITEM, _create_shortcut(KEY_DELETE, {}))
+	
+	menu.add_item("Sort Items")
+	
+	menu.add_item("Delete Checked Items")
 
 func _exit_tree() -> void:
 	_save_data_file()
