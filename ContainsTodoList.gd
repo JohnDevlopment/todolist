@@ -8,7 +8,8 @@ onready var todo_items: ItemList = $TodoItems
 export var enabled := false setget set_enabled
 
 # options = {
-#   #
+#   icon = Texture,
+#   modulate = Color
 # }
 func add_item(text: String, options: Dictionary = {}):
 	var i: int = todo_items.get_item_count()
@@ -74,12 +75,19 @@ func set_item_params(index: int, options: Dictionary) -> void:
 	if 'text' in options and not (options.text as String).empty():
 		todo_items.set_item_text(index, options.text)
 
-func sort_items() -> void:
+func sort_items(options := {}) -> void:
+	assert('icon' in options and options.icon is Texture, "options dictionary needs an icon texture")
+	assert('modulate' in options and options.modulate is Color, "options dictionary needs a modulation color")
+	
 	var items := get_array()
 	clear_items()
 	items.sort_custom(self, '_sort_function')
 	for item in items:
-		_add_todo_item(item.text)
+		var _options := {}
+		if item.finished:
+			_options["icon"] = options.icon
+			_options["modulate"] = options.modulate
+		add_item(item.text, _options)
 
 # Internals
 

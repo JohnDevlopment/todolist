@@ -229,7 +229,7 @@ func _on_edit_menu_index(index: int) -> void:
 			TodoItems.remove_checked()
 			StatusLabel.display_status(3, 'Removed Checked Items')
 		EditMenuIndex.SORT_ITEMS:
-			TodoItems.sort_items()
+			TodoItems.sort_items({icon = Resources.get_resource('check'), modulate = check_color})
 			StatusLabel.display_status(3, 'Sorted Items')
 
 func _on_FileDialog_file_selected(path: String) -> void:
