@@ -67,7 +67,7 @@ __meta__ = {
 margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
-items = [ "Choose File (CTRL+O)", null, 0, false, false, 0, 0, null, "", false, "Save (CTRL+S)", null, 0, false, false, 1, 0, null, "", false, "Delete Files", null, 0, false, false, 2, 0, null, "", false, "Close File (CTRL+W)", null, 0, false, false, 3, 0, null, "", false, "Quit (ALT+F4)", null, 0, false, false, 4, 0, null, "", false, "Get User Directory", null, 0, false, false, 5, 0, null, "", false ]
+items = [ "Choose File (CTRL+O)", null, 0, false, false, 0, 0, null, "", false, "Save (CTRL+S)", null, 0, false, false, 1, 0, null, "", false, "Delete Files", null, 0, false, false, 2, 0, null, "", false, "Get User Directory", null, 0, false, false, 3, 0, null, "", false, "Close File (CTRL+W)", null, 0, false, false, 4, 0, null, "", false, "Quit (ALT+F4)", null, 0, false, false, 5, 0, null, "", false ]
 
 [node name="EditMenuButton" type="MenuButton" parent="Margin/MainColumn/Menu"]
 margin_left = 39.0

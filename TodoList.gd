@@ -8,9 +8,9 @@ enum FileMenuIndex {
 	CHOOSE_FILE,
 	SAVE,
 	DELETE_FILES,
+	GET_USER_DIRECTORY,
 	CLOSE_FILE,
-	QUIT,
-	GET_USER_DIRECTORY
+	QUIT
 }
 
 enum EditMenuIndex {
