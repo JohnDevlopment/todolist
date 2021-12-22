@@ -13,10 +13,10 @@ With that said, download the zip and extract it, then change to the directory wh
 ### Linux
 
 ```shell
-/path/to/godot3.4 --export Linux/X11 binfile
+/path/to/godot3.4.1 --export Linux/X11 binfile
 ```
 
 ## Windows
 ```shell
-/path/to/godot3.4 --export "Windows Desktop" binfile
+/path/to/godot3.4.1 --export "Windows Desktop" binfile
 ```
