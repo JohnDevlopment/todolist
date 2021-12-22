@@ -2,11 +2,23 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Untracked Changes
+
+### Changed
+
+#### GUI
+
+* Fixed an issue where the "sort items" command did not render the checkmark next to finished tasks (Commit [04ba777e7eb3a972ee2785d7b1023aec8120be10](https://github.com/JohnDevlopment/todolist/commit/04ba777e7eb3a972ee2785d7b1023aec8120be10))
+* Changed menus to be built in script instead of the editor (Commit [48df2dd8cb6da416a5c6aea54c4cf04430c31189](https://github.com/JohnDevlopment/todolist/commit/48df2dd8cb6da416a5c6aea54c4cf04430c31189))
+* Use IDs instead of indices to reference menu commands (Commit [78da8b741bf6622259a49053d46555184353ecaf](https://github.com/JohnDevlopment/todolist/commit/78da8b741bf6622259a49053d46555184353ecaf))
+
+### Added
+
 ## Version 1.2
 
 ### Added
 
-#### Editor
+#### GUI
 
 * Added shortcuts (Commit [b93909b7b7abd7b6799eb20682030ac8b0e11c16](https://github.com/JohnDevlopment/todolist/commit/b93909b7b7abd7b6799eb20682030ac8b0e11c16))
 * File dialog automatically refreshes file list (Commit [137b446d6cf28a010e2d04befb1180bd0e60f188](https://github.com/JohnDevlopment/todolist/commit/137b446d6cf28a010e2d04befb1180bd0e60f188))
@@ -16,7 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-#### Editor
+#### GUI
 
 * Edit/delete buttons are now commands under the Edit menu (Commit [ae1d2dd24be72d46e28cb951a604ad0363db9cf2](https://github.com/JohnDevlopment/todolist/commit/ae1d2dd24be72d46e28cb951a604ad0363db9cf2) )
 
