@@ -1,18 +1,46 @@
 # CHANGELOG.md
 
+[fn1]: #fnt1
+
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Untracked Changes
+<!--  Categories
+GUI = Changes that affect the GUI and are visible in the GUI
+Scripting = Internal changes to the scripts
+Misc = Any changes that don't fit in any of the above categories
+ -->
+
+## Version 1.2.1
+
+### Added
+
+#### GUI
+
+* Added keyboard shortcuts
+ * `Ctrl+C` for `File->Close` (Commit [0917533ed6a9ed9a8f663bf7c29ca9cc2e60dbe9](https://github.com/JohnDevlopment/todolist/commit/0917533ed6a9ed9a8f663bf7c29ca9cc2e60dbe9))
+
+#### Misc
+
+* Added links in the `README.md` (Commit [b1c3addf085ca03a1e37a0231d100d63187e3f7b](https://github.com/JohnDevlopment/todolist/commit/b1c3addf085ca03a1e37a0231d100d63187e3f7b))
 
 ### Changed
 
 #### GUI
 
-* Fixed an issue where the "sort items" command did not render the checkmark next to finished tasks (Commit [04ba777e7eb3a972ee2785d7b1023aec8120be10](https://github.com/JohnDevlopment/todolist/commit/04ba777e7eb3a972ee2785d7b1023aec8120be10))
 * Changed menus to be built in script instead of the editor (Commit [48df2dd8cb6da416a5c6aea54c4cf04430c31189](https://github.com/JohnDevlopment/todolist/commit/48df2dd8cb6da416a5c6aea54c4cf04430c31189))
 * Use IDs instead of indices to reference menu commands (Commit [78da8b741bf6622259a49053d46555184353ecaf](https://github.com/JohnDevlopment/todolist/commit/78da8b741bf6622259a49053d46555184353ecaf))
+* Changed the order of things in the file menu (Commit [64dd92ffe8fdf30ac902e74739c568d91c859fda](https://github.com/JohnDevlopment/todolist/commit/64dd92ffe8fdf30ac902e74739c568d91c859fda))
 
-### Added
+### Fixed
+
+#### GUI
+
+* Fixed an issue where the "sort items" command did not render the checkmark next to finished tasks (Commit [04ba777e7eb3a972ee2785d7b1023aec8120be10](https://github.com/JohnDevlopment/todolist/commit/04ba777e7eb3a972ee2785d7b1023aec8120be10))
+
+#### Scripting
+
+* Made improvements to the algorithm used for sorting items (Commit [0fc19954c290504f7b478ef09d176ce3fdc55ddc](https://github.com/JohnDevlopment/todolist/commit/0fc19954c290504f7b478ef09d176ce3fdc55ddc))
+ * The most important aspect to this fix is two-fold: one, items with similar names are now sorted properly[\*][fn1]; two, the algorithm now accounts for checked items and puts them earlier in the list, whereas previously they were randomly strewn about.
 
 ## Version 1.2
 
@@ -43,4 +71,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Version 1.0.1
 
-This file was initially create while this app was officially in version 1.0.1.
+This file was initially created while this app was officially in version 1.0.1.
+
+- - -
+
+<small><p id="fnt1">* Assume you have two items named "Joe" and "Joey". When sorting the items, "Joe" is supposed to go before "Joey"; however, prior to the fix, the two were randomly sorted between each other. So "Joey" could go before "Joe" and vice versa.</p></small>
