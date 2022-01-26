@@ -59,6 +59,24 @@ arch=`cat $tmp`
 # Dialogs are done, so clear the screen
 clear
 
-zipfile="todolist-v$version${prerelease}_$arch.zip"
+# Remove temp file
+rm $tmp
 
-zip -DT releases/$zipfile bin/$arch/*
+zipfile="todolist-v$version${prerelease}_$arch.zip"
+srcdir="$PWD"
+
+# Make temp directory and delete it after exit
+tdir=$(mktemp -d)
+trap "rm -f -r $tdir" EXIT
+
+on_error() {
+    rm -f -r $tdir
+    exit 1
+}
+set -e
+
+# Make archive and move it to the 'releases' directory
+cp bin/$arch/* $tdir/
+cd $tdir
+zip --no-dir-entries -T $zipfile *
+mv $zipfile "$srcdir/releases/"
