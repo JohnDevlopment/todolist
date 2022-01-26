@@ -7,6 +7,36 @@ onready var todo_items: ItemList = $TodoItems
 
 export var enabled := false setget set_enabled
 
+class Comparison:
+	static func _string_comp(a: Dictionary, b: Dictionary) -> bool:
+		# both or neither are checked, so use string comparison
+		
+		var size : int = int( min(a.text.length(), b.text.length()) )
+		var a_trunc : String = (a.text as String).substr(0, size)
+		var b_trunc : String = (b.text as String).substr(0, size)
+		
+		var cmp : int = a_trunc.casecmp_to(b_trunc)
+		if cmp == 0:
+			cmp = (a.text as String).casecmp_to(b.text)
+		if cmp <= 0:
+			return true
+		
+		return false
+	
+	# return true if a comes before b
+	static func sort_function(a: Dictionary, b: Dictionary) -> bool:
+		assert('text' in a && 'finished' in a)
+		assert('text' in b && 'finished' in b)
+		
+		# A is checked but not B
+		if a.finished and not b.finished:
+			return true
+		# B is checked but not A
+		elif b.finished and not a.finished:
+			return false
+		
+		return _string_comp(a, b)
+
 # options = {
 #   icon = Texture,
 #   modulate = Color
@@ -81,7 +111,7 @@ func sort_items(options := {}) -> void:
 	
 	var items := get_array()
 	clear_items()
-	items.sort_custom(self, '_sort_function')
+	items.sort_custom(self.Comparison, 'sort_function')
 	for item in items:
 		var _options := {}
 		if item.finished:
@@ -94,33 +124,6 @@ func sort_items(options := {}) -> void:
 func _add_todo_item(text: String):
 	add_item(text, {})
 	$AddItem/ItemName.text = ''
-
-# return true if a comes before b
-func _sort_function(a: Dictionary, b: Dictionary) -> bool:
-	assert('text' in a && 'finished' in a)
-	assert('text' in b && 'finished' in b)
-	
-	# one or both are checked
-	if a.finished or not b.finished:
-		# a is checked
-		if a.finished and not b.finished:
-			return true
-		# b is checked
-		elif b.finished and not a.finished:
-			return false
-	
-	# both or neither are checked, so use string comparison
-	
-# warning-ignore:narrowing_conversion
-	var size : int = min(a.text.length(), b.text.length())
-	var a_trunc : String = (a.text as String).substr(0, size)
-	var b_trunc : String = (b.text as String).substr(0, size)
-	
-	var cmp : int = a_trunc.casecmp_to(b_trunc)
-	if cmp <= 0:
-		return true
-	
-	return false
 
 # Signals
 
