@@ -27,7 +27,6 @@ gdscript/warnings/return_value_discarded=false
 
 window/size/width=600
 window/size/height=675
-window/size/resizable=false
 
 [editor_plugins]
 
